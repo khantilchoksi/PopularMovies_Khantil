@@ -227,14 +227,18 @@ public class MainFragment extends Fragment {
                 String title;
                 String releaseDate;
                 String posterPath;
+                String overview;
+                String voteAverage;
 
                 JSONObject movieDetails = moviesArray.getJSONObject(i);
                 id = movieDetails.getString("id");
                 title = movieDetails.getString("title");
                 releaseDate = movieDetails.getString("release_date");
                 posterPath = movieDetails.getString("poster_path");
+                overview= movieDetails.getString("overview");
+                voteAverage = movieDetails.getString("vote_average");
 
-                movies[i] = new Movie(id,title,releaseDate,posterPath);
+                movies[i] = new Movie(id,title,releaseDate,posterPath,overview, voteAverage);
 
             }
 

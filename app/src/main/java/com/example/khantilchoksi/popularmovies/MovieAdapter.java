@@ -32,7 +32,7 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
         String poster = "http://image.tmdb.org/t/p/w185/"+movie.posterPath;
 
         ImageView moviePoster = (ImageView) convertView.findViewById(R.id.movieImage);
-        Picasso.with(getContext()).load(poster).into(moviePoster);
+            Picasso.with(getContext()).load(poster).into(moviePoster);
 
         return convertView;
     }

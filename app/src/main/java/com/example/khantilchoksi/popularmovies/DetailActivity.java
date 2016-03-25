@@ -13,11 +13,11 @@ public class DetailActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        if (savedInstanceState == null) {
+        /*if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.detailContainer, new DetailActivityFragment())
                     .commit();
-        }
+        }*/
 
         /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -29,7 +29,5 @@ public class DetailActivity extends AppCompatActivity {
         });*/
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
-
-
 
 }
