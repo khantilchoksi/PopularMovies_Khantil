@@ -7,7 +7,7 @@ Popular Movies is the app to discover popular and recent movies.
 * View a particular movie detail
 
 #API Used#
-themoviedb.org API
+[themoviedb.org] (https://www.themoviedb.org/documentation/api)  API
 
 #Libraries Used#
 * [Picasso] (http://square.github.io/picasso/) - a powerful library that will handle image loading and caching.
