@@ -1,9 +1,11 @@
 package com.example.khantilchoksi.popularmovies;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -159,7 +161,10 @@ public class MainFragment extends Fragment {
             String moviesJsonStr = null;
 
             try{
-                String baseURL = "https://api.themoviedb.org/3/movie/popular";
+                SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                String sortBy = pref.getString("sort_movies","popular");
+
+                String baseURL = "https://api.themoviedb.org/3/movie/"+sortBy;
                 String apiKey = "?api_key=" + BuildConfig.MOVIEDB_API_KEY;
 
                 URL url = new URL(baseURL.concat(apiKey));

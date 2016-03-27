@@ -1,3 +1,7 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,7 +11,6 @@
     android:paddingRight="0dp"
     android:paddingTop="0dp"
     tools:context="com.example.khantilchoksi.popularmovies.DetailActivityFragment">
-
 
     <TextView
         android:layout_width="wrap_content"
@@ -20,10 +23,10 @@
         android:layout_marginTop="20dp"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="20dp"
-        android:textColor="#323eef"
         android:textSize="26dp"
         android:textStyle="bold|italic"
-        android:layout_marginRight="20dp" />
+        android:layout_marginRight="20dp"
+        android:textColor="@color/colorMovieTitle" />
 
     <ImageView
         android:layout_width="180dp"
@@ -57,7 +60,8 @@
         android:layout_alignParentStart="true"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginRight="10dp" />
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -106,5 +110,5 @@
         android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp" />
 
-
 </RelativeLayout>
+</ScrollView>
