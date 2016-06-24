@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="0dp"
+    android:paddingBottom="8dp"
     android:paddingLeft="0dp"
     android:paddingRight="0dp"
     android:paddingTop="0dp"
@@ -67,6 +67,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Trailers:"
+        android:id="@+id/trailersTitle"
+        android:layout_below="@+id/overviewText"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp" />
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/trailerListView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/trailersTitle" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="User Ratings:"
         android:id="@+id/textView2"
         android:layout_alignTop="@+id/moviePoster"
@@ -109,6 +129,8 @@
         android:layout_toEndOf="@+id/moviePoster"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp" />
+
+
 
 </RelativeLayout>
 </ScrollView>

@@ -168,6 +168,7 @@ public class MainFragment extends Fragment {
                 String apiKey = "?api_key=" + BuildConfig.MOVIEDB_API_KEY;
 
                 URL url = new URL(baseURL.concat(apiKey));
+                Log.d(LOG_TAG,"URL : "+url.toString());
                 //Create the request to moviedb api
                 urlConnection= (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");

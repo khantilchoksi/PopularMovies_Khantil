@@ -7,7 +7,9 @@ import android.os.Parcelable;
  * Created by khantilchoksi on 24/03/16.
  */
 public class Movie implements Parcelable{
-    String id;
+
+
+    private String id;
     String title;
     String releaseDate;
     String posterPath;
@@ -62,5 +64,9 @@ public class Movie implements Parcelable{
     @Override
     public String toString(){
         return "\n Tite : "+this.title +"  ID : "+this.id+ "  Release Date : "+this.releaseDate+ " Poster Path : "+this.posterPath;
+    }
+
+    public String getId() {
+        return id;
     }
 }
