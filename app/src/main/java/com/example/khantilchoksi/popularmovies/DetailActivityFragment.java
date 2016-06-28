@@ -1,27 +1,20 @@
 package com.example.khantilchoksi.popularmovies;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,6 +38,8 @@ public class DetailActivityFragment extends Fragment {
     private ListView mTrailersListView;
     private RecyclerView mReviewsRecyclerView;
     private ReviewsRecyclerViewAdapter mReviewsRecyclerViewAdapter;
+    private TextView mNoReviewsTextView;
+    private TextView mNoTrailerTextView;
 
 
     public DetailActivityFragment() {
@@ -60,7 +55,7 @@ public class DetailActivityFragment extends Fragment {
         if(intent!= null && intent.hasExtra("movie_obj")){
             mMovie = (Movie) intent.getParcelableExtra("movie_obj");
 
-            ((TextView) rootView.findViewById(R.id.moviewOverview)).setText(mMovie.overview);
+            ((TextView) rootView.findViewById(R.id.movieOverview)).setText(mMovie.overview);
             ((TextView) rootView.findViewById(R.id.userRatings)).setText(mMovie.voteAverage);
             ((TextView) rootView.findViewById(R.id.releaseDate)).setText(mMovie.releaseDate);
         }
@@ -94,6 +89,9 @@ public class DetailActivityFragment extends Fragment {
         mReviewsRecyclerView.setLayoutManager(new LinearLayoutManager(mReviewsRecyclerView.getContext()));
         mReviewsRecyclerViewAdapter = new ReviewsRecyclerViewAdapter(getActivity(),
                 new ArrayList<ArrayList<String>>());
+
+        mNoReviewsTextView = (TextView) rootView.findViewById(R.id.noReviewsTextView);
+        mNoTrailerTextView = (TextView) rootView.findViewById(R.id.noTrailersTextView);
 
 /*        mReviewsRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
             @Override
@@ -159,130 +157,15 @@ public class DetailActivityFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        FetchTrailers fetchTrailers = new FetchTrailers();
+        FetchTrailersTask fetchTrailers = new FetchTrailersTask(mNoTrailerTextView,mTrailerAdapter,mMovie);
         fetchTrailers.execute();
+        setListViewHeightBasedOnChildren();
 
-        FetchReviewsTask fetchReviewsTask = new FetchReviewsTask(getActivity(),mMovie, mReviewsRecyclerView);
+
+        FetchReviewsTask fetchReviewsTask = new FetchReviewsTask(getActivity(),mMovie, mReviewsRecyclerView,mNoReviewsTextView);
         fetchReviewsTask.execute();
 
     }
 
-    //AsyncTask for fetching movie trailer
-    public class FetchTrailers extends AsyncTask<Void, Void, Trailer[]> {
-        private final String LOG_TAG = FetchTrailers.class.getSimpleName();
 
-        @Override
-        protected Trailer[] doInBackground(Void... params) {
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-
-            String trailersJsonStr = null;
-
-            try{
-
-                String baseURL = "https://api.themoviedb.org/3/movie/"+mMovie.getId()+"/videos";
-                String apiKey = "?api_key=" + BuildConfig.MOVIEDB_API_KEY;
-
-                URL url = new URL(baseURL.concat(apiKey));
-                Log.d(LOG_TAG, "URL : " + url.toString());
-                //Create the request to moviedb api
-                urlConnection= (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-                //Read the input stream into a string
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-
-                if(inputStream== null){
-                    Log.e(LOG_TAG,"Input Stream is null");
-                    return null;
-                }
-
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line;
-                while((line = reader.readLine()) != null){
-                    buffer.append(line + "\n");
-                }
-
-                if(buffer.length() == 0){
-                    return null;
-                }
-
-                trailersJsonStr = buffer.toString();
-                Log.d(LOG_TAG, "Trailers JSON String "+trailersJsonStr);
-
-            }catch(IOException e){
-                Log.e(LOG_TAG,"Error in Internet Connection", e);
-            } finally{
-                if(urlConnection!= null){
-                    urlConnection.disconnect();
-                }
-                if(reader!=null){
-                    try{
-                        reader.close();
-                    }catch (final IOException e){
-                        Log.e(LOG_TAG,"Error closing Buffered Reader", e);
-                    }
-                }
-            }
-
-            try{
-                return getTrailersDataFromJson(trailersJsonStr);
-            }catch (JSONException je){
-                Log.e(LOG_TAG,"JSON Exception", je);
-                je.printStackTrace();
-            }
-            return null;
-        }
-
-        private Trailer[] getTrailersDataFromJson(String trailersJsonStr) throws JSONException{
-            Log.d(LOG_TAG,"Trailer getTrailerDataFromJson called");
-            JSONObject moviesJson = new JSONObject(trailersJsonStr);
-            JSONArray trailersArray = moviesJson.getJSONArray("results");
-
-            Trailer[] trailers = new Trailer[trailersArray.length()];
-            Log.d(LOG_TAG,"Trailer Size:  " + trailersArray.length());
-            for(int i=0; i < trailersArray.length(); i++){
-
-                String id;
-                String name;
-                String key;
-
-                JSONObject trialerDetailsJSONObject = trailersArray.getJSONObject(i);
-                id = trialerDetailsJSONObject.getString("id");
-                name = trialerDetailsJSONObject.getString("name");
-                key = trialerDetailsJSONObject.getString("key");
-
-                trailers[i] = new Trailer(id,name,key);
-
-            }
-
-            for(Trailer t : trailers){
-                Log.d(LOG_TAG, "Trailer  " + t.toString());
-            }
-
-            return trailers;
-        }
-
-        @Override
-        protected void onPostExecute(Trailer[] trailers) {
-            if(trailers != null){
-                mTrailerAdapter.clear();
-                Log.d(LOG_TAG, "Trailer adapter after clearing:  " + mTrailerAdapter.getCount());
-
-/*                for(Trailer t : trailers){
-                    Log.d(LOG_TAG, "Trailer added to adapter:  " + t.getTrailerName());
-                    mTrailerAdapter.add(t);
-                }*/
-                for(int i=0;i<trailers.length;i++){
-                    Log.d(LOG_TAG, "Trailer added to adapter:  " + trailers[i].getTrailerName());
-                    mTrailerAdapter.add(trailers[i]);
-                }
-                setListViewHeightBasedOnChildren();
-            }
-        }
-
-    }
 }

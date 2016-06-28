@@ -69,15 +69,19 @@ public class DetailActivity extends AppCompatActivity {
                     Set<String> set = pref.getStringSet(FAVOURITE_MOVIES_KEY, null);
                     if(set!= null && set.contains(mMovie.getId())){
                         favouriteFloatingActionButton.setImageResource(R.mipmap.ic_favorite);
+                        set = new HashSet<String>(set);
                         set.remove(mMovie.getId());
                         editor.putStringSet(FAVOURITE_MOVIES_KEY, set);
                         editor.commit();
-                        Log.d(LOG_TAG, "Movie : " + mMovie.title + " has been REMOVED to shared preferrences.");
+                        Log.d(LOG_TAG, "Movie : " + mMovie.title + " has been REMOVED from shared preferences.");
                     }else{
                         favouriteFloatingActionButton.setImageResource(R.drawable.ic_favorite_pink);
                         if(set == null){
                             set = new HashSet<String>();
+                        }else{
+                            set = new HashSet<String>(set);
                         }
+                        set = new HashSet<String>(set);
                         set.add(mMovie.getId());
                         editor.putStringSet(FAVOURITE_MOVIES_KEY, set);
                         editor.commit();

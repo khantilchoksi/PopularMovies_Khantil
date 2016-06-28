@@ -121,7 +121,7 @@
 
 
             <TextView
-                android:id="@+id/moviewOverview"
+                android:id="@+id/movieOverview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/overviewHeading"
@@ -168,6 +168,18 @@
                 android:layout_marginTop="40dp"
                 android:background="@color/grayForDivider" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="No trailers available for this movie."
+                android:id="@+id/noTrailersTextView"
+                android:layout_marginTop="40dp"
+                android:layout_marginLeft="10dp"
+                android:padding="8dp"
+                android:textColor="@color/secondaryTextColor"
+                android:visibility="gone"/>
+
 
             <ListView
                 android:id="@+id/trailerListView"
@@ -190,6 +202,7 @@
             android:layout_below="@+id/trailers_card_view"
             android:layout_gravity="center"
             android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:focusableInTouchMode="false"
             app:cardPreventCornerOverlap="false"
             app:cardUseCompatPadding="true"
@@ -215,6 +228,17 @@
                 android:layout_marginTop="40dp"
                 android:background="@color/grayForDivider" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="No reviews available for this movie."
+                android:id="@+id/noReviewsTextView"
+                android:layout_marginTop="40dp"
+                android:layout_marginLeft="10dp"
+                android:padding="8dp"
+                android:textColor="@color/secondaryTextColor"
+                android:visibility="gone"/>
 
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"

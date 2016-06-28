@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,47 +30,19 @@ import java.util.ArrayList;
 import java.util.Set;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link MainFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * //Use the {@link MainFragment#//newInstance} factory method to
- * create an instance of this fragment.
- */
 public class MainFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    //private static final String ARG_PARAM1 = "param1";
-    //private static final String ARG_PARAM2 = "param2";
+
 
     // TODO: Rename and change types of parameters
     private MovieAdapter movieAdapter;
-    //private ArrayList<Movie> movieList;
+    private TextView favoriteEmptyTextView;
 
-    private OnFragmentInteractionListener mListener;
 
     public MainFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * //@param param1 Parameter 1.
-     * //@param param2 Parameter 2.
-     * @return A new instance of fragment MainFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    /*public static MainFragment newInstance(String param1, String param2) {
-        MainFragment fragment = new MainFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }*/
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -98,10 +71,12 @@ public class MainFragment extends Fragment {
                 Movie movie = movieAdapter.getItem(position);
 
                 Intent movieDetailIntent = new Intent(getActivity(), DetailActivity.class);
-                movieDetailIntent.putExtra("movie_obj",movie);
+                movieDetailIntent.putExtra("movie_obj", movie);
                 startActivity(movieDetailIntent);
             }
         });
+
+        favoriteEmptyTextView = (TextView) rootView.findViewById(R.id.favoriteEmpty);
 
         return rootView;
     }
@@ -128,6 +103,8 @@ public class MainFragment extends Fragment {
                     FetchFavoriteMovieTask fetchFavoriteMovieTask = new FetchFavoriteMovieTask(getActivity(), movieAdapter, movieId);
                     fetchFavoriteMovieTask.execute();
                 }
+            }else{
+                favoriteEmptyTextView.setVisibility(View.VISIBLE);
             }
 
         }else{

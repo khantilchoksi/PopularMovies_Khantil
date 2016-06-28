@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,11 +29,13 @@ public class FetchReviewsTask extends AsyncTask<Void,Void,ArrayList<ArrayList<St
     private Context mContext;
     private Movie mMovie;
     private RecyclerView mReviewsRecyclerView;
+    private TextView mNoReviewsTextView;
 
-    public FetchReviewsTask(Context mContext, Movie mMovie,RecyclerView mReviewsRecyclerView) {
+    public FetchReviewsTask(Context mContext, Movie mMovie,RecyclerView mReviewsRecyclerView, TextView mNoReviewsTextView) {
         this.mContext = mContext;
         this.mMovie = mMovie;
         this.mReviewsRecyclerView = mReviewsRecyclerView;
+        this.mNoReviewsTextView = mNoReviewsTextView;
     }
 
     @Override
@@ -133,10 +137,14 @@ public class FetchReviewsTask extends AsyncTask<Void,Void,ArrayList<ArrayList<St
 
     @Override
     protected void onPostExecute(ArrayList<ArrayList<String>> reviews) {
-        if(reviews != null){
+        if(reviews != null) {
 //            Log.d(LOG_TAG, "Trailer adapter after clearing:  " + mTrailerAdapter.getCount());
 
-                mReviewsRecyclerView.setAdapter(new ReviewsRecyclerViewAdapter(mContext, reviews));
+            mReviewsRecyclerView.setAdapter(new ReviewsRecyclerViewAdapter(mContext, reviews));
+        }
+
+        if(reviews.size() == 0){
+            mNoReviewsTextView.setVisibility(View.VISIBLE);
         }
     }
 
