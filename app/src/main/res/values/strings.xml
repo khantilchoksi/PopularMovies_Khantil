@@ -12,11 +12,13 @@
     <string-array name="pref_movies_options">
         <item>Most Popular</item>
         <item>High Rated</item>
+        <item>Favorite</item>
     </string-array>
 
     <string-array name="pref_movies_values">
         <item>popular</item>
         <item>top_rated</item>
+        <item>favorite</item>
     </string-array>
 
 

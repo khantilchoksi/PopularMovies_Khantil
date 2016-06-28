@@ -6,13 +6,18 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -37,6 +42,10 @@ public class DetailActivityFragment extends Fragment {
 
     private Movie mMovie;
     private TrailerAdapter mTrailerAdapter;
+    private ListView mTrailersListView;
+    private RecyclerView mReviewsRecyclerView;
+    private ReviewsRecyclerViewAdapter mReviewsRecyclerViewAdapter;
+
 
     public DetailActivityFragment() {
     }
@@ -51,23 +60,27 @@ public class DetailActivityFragment extends Fragment {
         if(intent!= null && intent.hasExtra("movie_obj")){
             mMovie = (Movie) intent.getParcelableExtra("movie_obj");
 
-            ((TextView) rootView.findViewById(R.id.movieName)).setText(mMovie.title);
-
-            String poster = "http://image.tmdb.org/t/p/w185/"+mMovie.posterPath;
-            ImageView movieView = (ImageView) rootView.findViewById(R.id.moviePoster);
-            Picasso.with(getActivity()).load(poster).into(movieView);
-
-            ((TextView) rootView.findViewById(R.id.overviewText)).setText(mMovie.overview);
-            ((TextView) rootView.findViewById(R.id.ratingView)).setText(mMovie.voteAverage);
-            ((TextView) rootView.findViewById(R.id.dateView)).setText(mMovie.releaseDate);
+            ((TextView) rootView.findViewById(R.id.moviewOverview)).setText(mMovie.overview);
+            ((TextView) rootView.findViewById(R.id.userRatings)).setText(mMovie.voteAverage);
+            ((TextView) rootView.findViewById(R.id.releaseDate)).setText(mMovie.releaseDate);
         }
 
-        mTrailerAdapter = new TrailerAdapter(getActivity(), new ArrayList<Trailer>());
+        mTrailerAdapter = new TrailerAdapter(getActivity(), new ArrayList<Trailer>(3));
 
-        ListView trailersListView = (ListView) rootView.findViewById(R.id.trailerListView);
-        trailersListView.setAdapter(mTrailerAdapter);
+        mTrailersListView = (ListView) rootView.findViewById(R.id.trailerListView);
+        mTrailersListView.setAdapter(mTrailerAdapter);
+        /*setListViewHeightBasedOnChildren();
 
-        trailersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mTrailersListView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                // Disallow the touch request for parent scroll on touch of child view
+                v.getParent().requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });*/
+
+        mTrailersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Trailer getTrailer = mTrailerAdapter.getItem(position);
@@ -77,7 +90,60 @@ public class DetailActivityFragment extends Fragment {
             }
         });
 
+        mReviewsRecyclerView = (RecyclerView) rootView.findViewById(R.id.reviewsRecyclerView);
+        mReviewsRecyclerView.setLayoutManager(new LinearLayoutManager(mReviewsRecyclerView.getContext()));
+        mReviewsRecyclerViewAdapter = new ReviewsRecyclerViewAdapter(getActivity(),
+                new ArrayList<ArrayList<String>>());
+
+/*        mReviewsRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+                int action = e.getAction();
+                switch (action) {
+                    case MotionEvent.ACTION_MOVE:
+                        rv.getParent().requestDisallowInterceptTouchEvent(true);
+                        break;
+                }
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+            }
+        });*/
+
+/*        //add ItemDecoration
+//        mReviewsRecyclerView.addItemDecoration(new VerticalSpaceItemDecoration(1));
+        mReviewsRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));*/
+
         return rootView;
+    }
+
+    public void setListViewHeightBasedOnChildren() {
+        ListAdapter listAdapter = mTrailersListView.getAdapter();
+        if (listAdapter == null)
+            return;
+
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(mTrailersListView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+        int totalHeight = 0;
+        View view = null;
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            view = listAdapter.getView(i, view, mTrailersListView);
+            if (i == 0)
+                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += view.getMeasuredHeight();
+        }
+        ViewGroup.LayoutParams params = mTrailersListView.getLayoutParams();
+        params.height = totalHeight + (mTrailersListView.getDividerHeight() * (listAdapter.getCount() - 1));
+        mTrailersListView.setLayoutParams(params);
     }
 
     @Override
@@ -95,6 +161,10 @@ public class DetailActivityFragment extends Fragment {
         super.onStart();
         FetchTrailers fetchTrailers = new FetchTrailers();
         fetchTrailers.execute();
+
+        FetchReviewsTask fetchReviewsTask = new FetchReviewsTask(getActivity(),mMovie, mReviewsRecyclerView);
+        fetchReviewsTask.execute();
+
     }
 
     //AsyncTask for fetching movie trailer
@@ -202,11 +272,17 @@ public class DetailActivityFragment extends Fragment {
                 mTrailerAdapter.clear();
                 Log.d(LOG_TAG, "Trailer adapter after clearing:  " + mTrailerAdapter.getCount());
 
-                for(Trailer t : trailers){
+/*                for(Trailer t : trailers){
                     Log.d(LOG_TAG, "Trailer added to adapter:  " + t.getTrailerName());
                     mTrailerAdapter.add(t);
+                }*/
+                for(int i=0;i<trailers.length;i++){
+                    Log.d(LOG_TAG, "Trailer added to adapter:  " + trailers[i].getTrailerName());
+                    mTrailerAdapter.add(trailers[i]);
                 }
+                setListViewHeightBasedOnChildren();
             }
         }
+
     }
 }

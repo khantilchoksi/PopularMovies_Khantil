@@ -1,136 +1,235 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="8dp"
-    android:paddingLeft="0dp"
-    android:paddingRight="0dp"
-    android:paddingTop="0dp"
-    tools:context="com.example.khantilchoksi.popularmovies.DetailActivityFragment">
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:background="@color/lightGray"
+    android:fillViewport="true">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
-        android:id="@+id/movieName"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="20dp"
-        android:textSize="26dp"
-        android:textStyle="bold|italic"
-        android:layout_marginRight="20dp"
-        android:textColor="@color/colorMovieTitle" />
-
-    <ImageView
-        android:layout_width="180dp"
-        android:layout_height="240dp"
-        android:id="@+id/moviePoster"
-        android:layout_below="@+id/movieName"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="20dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Overview:"
-        android:id="@+id/textView"
-        android:layout_below="@+id/moviePoster"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="20dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="overview"
-        android:id="@+id/overviewText"
-        android:layout_below="@+id/textView"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Trailers:"
-        android:id="@+id/trailersTitle"
-        android:layout_below="@+id/overviewText"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="20dp" />
-
-    <ListView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/trailerListView"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/trailersTitle" />
+        tools:context="com.example.khantilchoksi.popularmovies.DetailActivityFragment">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="User Ratings:"
-        android:id="@+id/textView2"
-        android:layout_alignTop="@+id/moviePoster"
-        android:layout_toRightOf="@+id/moviePoster"
-        android:layout_toEndOf="@+id/moviePoster"
-        android:layout_marginLeft="10dp" />
+        <android.support.v7.widget.CardView
+            android:id="@+id/movie_details_card_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_gravity="center"
+            app:cardCornerRadius="1.5dp"
+            app:cardElevation="1.5dp"
+            app:cardPreventCornerOverlap="false"
+            app:cardUseCompatPadding="true"
+            android:layout_marginTop="16dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Medium Text"
-        android:id="@+id/ratingView"
-        android:layout_below="@+id/textView2"
-        android:layout_toRightOf="@+id/moviePoster"
-        android:layout_toEndOf="@+id/moviePoster"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Release Date:"
-        android:id="@+id/textView3"
-        android:layout_below="@+id/ratingView"
-        android:layout_toRightOf="@+id/moviePoster"
-        android:layout_toEndOf="@+id/moviePoster"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="50dp" />
+                <TextView
+                    android:id="@+id/userRatingsHeading"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:text="User Ratings: "
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/colorPrimary" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Medium Text"
-        android:id="@+id/dateView"
-        android:layout_below="@+id/textView3"
-        android:layout_toRightOf="@+id/moviePoster"
-        android:layout_toEndOf="@+id/moviePoster"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp" />
+                <TextView
+                    android:id="@+id/userRatings"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/userRatingsHeading"
+                    android:text="7.38"
+                    android:layout_alignLeft="@+id/releaseDate"
+                    android:layout_alignStart="@+id/releaseDate"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/secondaryTextColor" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@+id/userRatings"
+                    android:layout_marginTop="10dp"
+                    android:background="@color/grayForDivider" />
 
 
+                <TextView
+                    android:id="@+id/releaseDateHeading"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/userRatings"
+                    android:layout_marginTop="25dp"
+                    android:text="Release Date:"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/colorPrimary" />
 
-</RelativeLayout>
-</ScrollView>
+                <TextView
+                    android:id="@+id/releaseDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/releaseDateHeading"
+                    android:layout_marginBottom="10dp"
+                    android:text="30-06-2016"
+                    android:layout_marginLeft="8dp"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_toRightOf="@+id/releaseDateHeading"
+                    android:layout_toEndOf="@+id/releaseDateHeading"
+                    android:textColor="@color/secondaryTextColor" />
+
+            </RelativeLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/overview_card_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/movie_details_card_view"
+            android:layout_gravity="center"
+            android:layout_marginTop="4dp"
+            android:focusableInTouchMode="false"
+            app:cardPreventCornerOverlap="false"
+            app:cardUseCompatPadding="true"
+            card_view:cardCornerRadius="1.5dp"
+            card_view:cardElevation="1.5dp">
+
+            <TextView
+                android:id="@+id/overviewHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:text="Synopsis:"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/colorPrimary" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/overviewHeading"
+                android:layout_marginTop="40dp"
+                android:background="@color/grayForDivider" />
+
+
+            <TextView
+                android:id="@+id/moviewOverview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/overviewHeading"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="50dp"
+                android:text="Movie Overview Movie Overview Movie Overview Movie Overview Movie Overview Movie Overview Movie Overview Movie Overview Movie Overview Movie OverviewMovie OverviewMovie Overview Movie OverviewMovie Overview"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/secondaryTextColor" />
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/trailers_card_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/overview_card_view"
+            android:layout_gravity="center"
+            android:layout_marginTop="4dp"
+            android:focusableInTouchMode="false"
+            app:cardPreventCornerOverlap="false"
+            app:cardUseCompatPadding="true"
+            card_view:cardCornerRadius="1.5dp"
+            card_view:cardElevation="1.5dp">
+
+            <TextView
+                android:id="@+id/trailersHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:text="Trailers:"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/colorPrimary" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/trailersHeading"
+                android:layout_marginTop="40dp"
+                android:background="@color/grayForDivider" />
+
+
+            <ListView
+                android:id="@+id/trailerListView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="false"
+                android:layout_below="@+id/trailersHeading"
+                android:layout_marginTop="40dp"
+                android:paddingLeft="8dp"/>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/reviews_card_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/trailers_card_view"
+            android:layout_gravity="center"
+            android:layout_marginTop="4dp"
+            android:focusableInTouchMode="false"
+            app:cardPreventCornerOverlap="false"
+            app:cardUseCompatPadding="true"
+            card_view:cardCornerRadius="1.5dp"
+            card_view:cardElevation="1.5dp">
+
+            <TextView
+                android:id="@+id/reviewsHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:text="Reviews:"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/colorPrimary" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/overviewHeading"
+                android:layout_marginTop="40dp"
+                android:background="@color/grayForDivider" />
+
+
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:scrollbars="vertical"
+                android:layout_marginTop="40dp"
+                android:id="@+id/reviewsRecyclerView">
+
+            </android.support.v7.widget.RecyclerView>
+
+        </android.support.v7.widget.CardView>
+
+
+
+
+    </RelativeLayout>
+</android.support.v4.widget.NestedScrollView>

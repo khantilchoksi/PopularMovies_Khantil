@@ -1,5 +1,6 @@
 package com.example.khantilchoksi.popularmovies;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -25,6 +26,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Set;
 
 
 /**
@@ -107,8 +109,32 @@ public class MainFragment extends Fragment {
     @Override
     public void onStart(){
         super.onStart();
-        FetchMovies fetchMovies = new FetchMovies();
-        fetchMovies.execute();
+
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String sortBy = pref.getString("sort_movies","popular");
+
+        if(sortBy.equals("favorite")){
+            movieAdapter.clear();
+            Log.d("Pref","Favorite is selected");
+            SharedPreferences sharedPreferences = getActivity().getSharedPreferences(DetailActivity.SHARED_PREF_FILE, Context.MODE_PRIVATE);
+            Set<String> favoriteMoviesSet = sharedPreferences.getStringSet(DetailActivity.FAVOURITE_MOVIES_KEY, null);
+
+            if(favoriteMoviesSet != null){
+//                String[] favoriteMoviesList = (String[]) favoriteMoviesSet.toArray();
+                ArrayList<String> favoriteMovieList = new ArrayList<String>(favoriteMoviesSet);
+
+                for(String movieId : favoriteMovieList){
+                    Log.d(" Favourite Movie: ", movieId);
+                    FetchFavoriteMovieTask fetchFavoriteMovieTask = new FetchFavoriteMovieTask(getActivity(), movieAdapter, movieId);
+                    fetchFavoriteMovieTask.execute();
+                }
+            }
+
+        }else{
+            FetchMoviesTask fetchMovies = new FetchMoviesTask(getActivity(),movieAdapter);
+            fetchMovies.execute();
+        }
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -150,120 +176,5 @@ public class MainFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    public class FetchMovies extends AsyncTask<Void, Void, Movie[]>{
-        private final String LOG_TAG = FetchMovies.class.getSimpleName();
 
-        @Override
-        protected Movie[] doInBackground(Void... params) {
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-
-            String moviesJsonStr = null;
-
-            try{
-                SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                String sortBy = pref.getString("sort_movies","popular");
-
-                String baseURL = "https://api.themoviedb.org/3/movie/"+sortBy;
-                String apiKey = "?api_key=" + BuildConfig.MOVIEDB_API_KEY;
-
-                URL url = new URL(baseURL.concat(apiKey));
-                Log.d(LOG_TAG,"URL : "+url.toString());
-                //Create the request to moviedb api
-                urlConnection= (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-                //Read the input stream into a string
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-
-                if(inputStream== null){
-                    Log.e(LOG_TAG,"Input Stream is null");
-                    return null;
-                }
-
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line;
-                while((line = reader.readLine()) != null){
-                    buffer.append(line + "\n");
-                }
-
-                if(buffer.length() == 0){
-                    return null;
-                }
-
-                moviesJsonStr = buffer.toString();
-                Log.v(LOG_TAG, "Movies JSON String "+moviesJsonStr);
-
-            }catch(IOException e){
-                Log.e(LOG_TAG,"Error in Internet Connection", e);
-            } finally{
-                if(urlConnection!= null){
-                    urlConnection.disconnect();
-                }
-                if(reader!=null){
-                    try{
-                        reader.close();
-                    }catch (final IOException e){
-                        Log.e(LOG_TAG,"Error closing Buffered Reader", e);
-                    }
-                }
-            }
-
-            try{
-                return getMoviesDataFromJson(moviesJsonStr);
-            }catch (JSONException je){
-                Log.e(LOG_TAG,"JSON Exception", je);
-                je.printStackTrace();
-            }
-            return null;
-        }
-
-        private Movie[] getMoviesDataFromJson(String moviesJsonStr) throws JSONException{
-            JSONObject moviesJson = new JSONObject(moviesJsonStr);
-            JSONArray moviesArray = moviesJson.getJSONArray("results");
-
-            Movie[] movies = new Movie[moviesArray.length()];
-
-            for(int i=0; i < moviesArray.length(); i++){
-
-                String id;
-                String title;
-                String releaseDate;
-                String posterPath;
-                String overview;
-                String voteAverage;
-
-                JSONObject movieDetails = moviesArray.getJSONObject(i);
-                id = movieDetails.getString("id");
-                title = movieDetails.getString("title");
-                releaseDate = movieDetails.getString("release_date");
-                posterPath = movieDetails.getString("poster_path");
-                overview= movieDetails.getString("overview");
-                voteAverage = movieDetails.getString("vote_average");
-
-                movies[i] = new Movie(id,title,releaseDate,posterPath,overview, voteAverage);
-
-            }
-
-            for(Movie m : movies){
-                Log.v(LOG_TAG, "\n Movie  "+ m.toString());
-            }
-
-            return movies;
-        }
-
-        @Override
-        protected void onPostExecute(Movie[] movies) {
-            if(movies != null){
-                movieAdapter.clear();
-
-                for(Movie m : movies){
-                    movieAdapter.add(m);
-                }
-            }
-        }
-    }
 }

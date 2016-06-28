@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,7 +22,7 @@ public class TrailerAdapter extends ArrayAdapter<Trailer>{
 
     private final String LOG_TAG = TrailerAdapter.class.getSimpleName();
 
-    public TrailerAdapter(Context context, List<Trailer> objects) {
+    public TrailerAdapter(Context context, ArrayList<Trailer> objects) {
         super(context, 0, objects);
     }
 
@@ -35,7 +36,7 @@ public class TrailerAdapter extends ArrayAdapter<Trailer>{
 
         TextView trailerName = (TextView) convertView.findViewById(R.id.trailerName);
         trailerName.setText(trailer.getTrailerName());
-        Log.d(LOG_TAG,"Trailer added to adapter: "+trailer.getTrailerName());
+        Log.d(LOG_TAG,"Position"+position+"  :  Trailer name: "+trailer.getTrailerName());
 
         return convertView;
     }

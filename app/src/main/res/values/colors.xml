@@ -1,7 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+<!--    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>-->
+    <color name="colorPrimary">#12e1c4</color>
+    <color name="colorPrimaryDark">#0cc5b3</color>
+
+    <color name="colorAccent">#12e1c4</color>
+    <color name="colorPink">#FF4081</color>
     <color name="colorMovieTitle">#0f1dde</color>
+
+    <color name="lightGray">#F5F5F5</color>
+    <color name="grayForDivider">#E0E0E0</color>
+
+    <!-- Primary Text Title Black 87% (hex 57)-->
+    <color name="primaryTextColor">#d9000000</color>
+
+    <!-- Primary Text Title Black 54% (hex 36)-->
+    <color name="secondaryTextColor">#8c000000</color>
+
+    <!-- Primary Text Title Black 38% (hex 26)-->
+    <color name="disabledTextColor">#38000000</color>
 </resources>
