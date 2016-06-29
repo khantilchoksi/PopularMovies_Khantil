@@ -70,9 +70,11 @@ public class MainFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Movie movie = movieAdapter.getItem(position);
 
-                Intent movieDetailIntent = new Intent(getActivity(), DetailActivity.class);
+/*                Intent movieDetailIntent = new Intent(getActivity(), DetailActivity.class);
                 movieDetailIntent.putExtra("movie_obj", movie);
-                startActivity(movieDetailIntent);
+                startActivity(movieDetailIntent);*/
+
+                ((Callback)getActivity()).onItemSelected(movie);
             }
         });
 
@@ -148,10 +150,21 @@ public class MainFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+/*    public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }*/
+
+
+    /**
+     * A callback interface that all activities containing this fragment must
+     * implement. This mechanism allows activities to be notified of item
+     * selections.
+     */
+    public interface Callback {
+        /**
+         * DetailFragmentCallback for when an item has been selected.
+         */
+        public void onItemSelected(Movie movie);
     }
-
-
 }

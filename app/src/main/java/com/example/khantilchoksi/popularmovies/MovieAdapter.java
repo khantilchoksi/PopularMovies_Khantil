@@ -34,6 +34,11 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
         ImageView moviePoster = (ImageView) convertView.findViewById(R.id.movieImage);
             Picasso.with(getContext()).load(poster).into(moviePoster);
 
+        if(MainActivity.mTwoPane && position == 0){
+            convertView.performClick();
+        }
+
+
         return convertView;
     }
 

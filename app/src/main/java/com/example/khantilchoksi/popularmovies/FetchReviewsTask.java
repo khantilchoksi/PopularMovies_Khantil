@@ -46,7 +46,6 @@ public class FetchReviewsTask extends AsyncTask<Void,Void,ArrayList<ArrayList<St
         String reviewsJsonStr = null;
 
         try{
-
             String baseURL = "https://api.themoviedb.org/3/movie/"+mMovie.getId()+"/reviews";
             String apiKey = "?api_key=" + BuildConfig.MOVIEDB_API_KEY;
 

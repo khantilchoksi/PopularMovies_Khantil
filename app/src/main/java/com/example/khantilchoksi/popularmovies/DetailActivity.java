@@ -32,15 +32,16 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Intent intent = getIntent();
 
-        if(intent!= null && intent.hasExtra("movie_obj")){
-            mMovie = (Movie) intent.getParcelableExtra("movie_obj");
+        if (savedInstanceState == null) {
+            Intent receiveIntent = getIntent();
+            mMovie = (Movie) receiveIntent.getParcelableExtra(DetailActivityFragment.DETAIL_MOVIE_OBJ);
 
-            final CollapsingToolbarLayout collapsingToolbar =
+            /*final CollapsingToolbarLayout collapsingToolbar =
                     (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
             collapsingToolbar.setTitle(mMovie.title);
 
@@ -48,11 +49,23 @@ public class DetailActivity extends AppCompatActivity {
             String poster = "http://image.tmdb.org/t/p/w185/"+mMovie.posterPath;
 
             ImageView collapsingToolbarImageView = (ImageView) findViewById(R.id.collapsingToolbarImage);
-            Picasso.with(this).load(poster).into(collapsingToolbarImageView);
+            Picasso.with(this).load(poster).into(collapsingToolbarImageView);*/
 
+            Log.d("Log Tag ", "Received intent movie :  "+mMovie.title);
+            Bundle arguments = new Bundle();
+            arguments.putParcelable(DetailActivityFragment.DETAIL_MOVIE_OBJ,mMovie);
+
+            DetailActivityFragment detailFragment = new DetailActivityFragment();
+            detailFragment.setArguments(arguments);
+
+            getSupportFragmentManager().beginTransaction()
+//                    .add(R.id.weather_detail_container, new DetailFragment())
+                    .add(R.id.movie_detail_container, detailFragment)
+                    .commit();
         }
 
-        final FloatingActionButton favouriteFloatingActionButton = (FloatingActionButton) findViewById(R.id.favoriteFloatingActionButton);
+
+        /*final FloatingActionButton favouriteFloatingActionButton = (FloatingActionButton) findViewById(R.id.favoriteFloatingActionButton);
 
         final SharedPreferences pref = getSharedPreferences(SHARED_PREF_FILE, Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = pref.edit();
@@ -89,10 +102,11 @@ public class DetailActivity extends AppCompatActivity {
                     }
                 }
             });
-        }
+        }*/
 
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
+
 
 }

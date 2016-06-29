@@ -6,4 +6,12 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
+
+<!--    <style name="ActionBar.Solid.Popular.Movie.NoTitle" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="displayOptions">useLogo|showHome</item>
+        <item name="android:popupTheme">@style/AppTheme.PopupOverlay</item>
+        <item name="android:background">@null</item>
+
+        &lt;!&ndash;<item name="logo">@drawable/ic_logo</item>&ndash;&gt;
+    </style>-->
 </resources>
