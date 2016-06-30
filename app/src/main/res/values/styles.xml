@@ -13,6 +13,11 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="MainActivityTheme" parent="AppTheme">
+        <item name="displayOptions">useLogo</item>
+        <item name="logo">@drawable/appicon</item>
+    </style>
+
 <!--    <style name="MovieDetailTheme" parent="AppTheme">
         <item name="actionBarStyle">@style/ActionBar.Solid.Popular.Movie.NoTitle</item>
     </style>
