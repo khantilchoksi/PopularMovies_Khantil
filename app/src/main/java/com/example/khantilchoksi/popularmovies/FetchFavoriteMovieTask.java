@@ -1,12 +1,11 @@
 package com.example.khantilchoksi.popularmovies;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -23,12 +22,12 @@ import java.net.URL;
 public class FetchFavoriteMovieTask extends AsyncTask<Void,Void,Movie> {
     private final String LOG_TAG = FetchFavoriteMovieTask.class.getSimpleName();
     private Context mContext;
-    private MovieAdapter mMoviewAdapter;
+    private MovieAdapter mMovieAdapter;
     private String movieId;
 
     public FetchFavoriteMovieTask(Context mContext, MovieAdapter mMoviewAdapter,String movieId) {
         this.mContext = mContext;
-        this.mMoviewAdapter = mMoviewAdapter;
+        this.mMovieAdapter = mMoviewAdapter;
         this.movieId = movieId;
     }
 
@@ -126,7 +125,22 @@ public class FetchFavoriteMovieTask extends AsyncTask<Void,Void,Movie> {
     @Override
     protected void onPostExecute(Movie movie) {
         if(movie != null){
-                mMoviewAdapter.add(movie);
+                mMovieAdapter.add(movie);
+        }
+
+        if(MainActivity.mTwoPane && mMovieAdapter.getCount()==1){
+            //Tablet UX && first favorite movie
+            Log.d(LOG_TAG,"Two pane layout initialized with first movie details");
+            Bundle args = new Bundle();
+            args.putParcelable(DetailActivityFragment.DETAIL_MOVIE_OBJ, mMovieAdapter.getItem(0));
+
+            DetailActivityFragment detailFragment = new DetailActivityFragment();
+            detailFragment.setArguments(args);
+
+            AppCompatActivity appCompatActivity = (AppCompatActivity) mContext;
+            appCompatActivity.getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.movie_detail_container, detailFragment, MainActivity.DETAILFRAGMENT_TAG)
+                    .commit();
         }
     }
 }

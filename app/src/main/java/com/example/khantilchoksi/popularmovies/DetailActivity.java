@@ -33,8 +33,8 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+/*        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);*/
 
 
         if (savedInstanceState == null) {
@@ -51,7 +51,7 @@ public class DetailActivity extends AppCompatActivity {
             ImageView collapsingToolbarImageView = (ImageView) findViewById(R.id.collapsingToolbarImage);
             Picasso.with(this).load(poster).into(collapsingToolbarImageView);*/
 
-            Log.d("Log Tag ", "Received intent movie :  "+mMovie.title);
+            Log.d(LOG_TAG, "Received intent movie :  "+mMovie.title);
             Bundle arguments = new Bundle();
             arguments.putParcelable(DetailActivityFragment.DETAIL_MOVIE_OBJ,mMovie);
 

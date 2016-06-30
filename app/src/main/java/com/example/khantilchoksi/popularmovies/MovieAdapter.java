@@ -1,6 +1,7 @@
 package com.example.khantilchoksi.popularmovies;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,10 +34,6 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
 
         ImageView moviePoster = (ImageView) convertView.findViewById(R.id.movieImage);
             Picasso.with(getContext()).load(poster).into(moviePoster);
-
-        if(MainActivity.mTwoPane && position == 0){
-            convertView.performClick();
-        }
 
 
         return convertView;

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -25,16 +24,6 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -44,13 +33,13 @@ import java.util.Set;
  */
 public class DetailActivityFragment extends Fragment {
 
-    private String LOG_TAG = DetailActivityFragment.class.getSimpleName();
+    private static String LOG_TAG = DetailActivityFragment.class.getSimpleName();
 
     private Movie mMovie = null;
-    private TrailerAdapter mTrailerAdapter;
-    private ListView mTrailersListView;
     private RecyclerView mReviewsRecyclerView;
+    private RecyclerView mTrailersRecyclerView;
     private ReviewsRecyclerViewAdapter mReviewsRecyclerViewAdapter;
+    private TrailersRecyclerViewAdapter mTrailersRecyclerViewAdapter;
     private TextView mNoReviewsTextView;
     private TextView mNoTrailerTextView;
 
@@ -64,8 +53,8 @@ public class DetailActivityFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
+                             final Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
         if(MainActivity.mTwoPane){
@@ -78,8 +67,6 @@ public class DetailActivityFragment extends Fragment {
 
             ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-
-
 
         Bundle arguments = getArguments();
         if(arguments != null){
@@ -110,10 +97,6 @@ public class DetailActivityFragment extends Fragment {
             ((TextView) rootView.findViewById(R.id.releaseDate)).setText(mMovie.releaseDate);
         }*/
 
-        mTrailerAdapter = new TrailerAdapter(getActivity(), new ArrayList<Trailer>(3));
-
-        mTrailersListView = (ListView) rootView.findViewById(R.id.trailerListView);
-        mTrailersListView.setAdapter(mTrailerAdapter);
         /*setListViewHeightBasedOnChildren();
 
         mTrailersListView.setOnTouchListener(new View.OnTouchListener() {
@@ -125,15 +108,10 @@ public class DetailActivityFragment extends Fragment {
             }
         });*/
 
-        mTrailersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Trailer getTrailer = mTrailerAdapter.getItem(position);
-                Intent intent = new Intent(Intent.ACTION_VIEW,
-                        Uri.parse("http://www.youtube.com/watch?v=" + getTrailer.getTrailerKey()));
-                startActivity(intent);
-            }
-        });
+        mTrailersRecyclerView = (RecyclerView) rootView.findViewById(R.id.trailersRecyclerView);
+        mTrailersRecyclerView.setLayoutManager(new LinearLayoutManager(mTrailersRecyclerView.getContext()));
+        mTrailersRecyclerViewAdapter = new TrailersRecyclerViewAdapter(getActivity(),
+                new ArrayList<Trailer>());
 
         mReviewsRecyclerView = (RecyclerView) rootView.findViewById(R.id.reviewsRecyclerView);
         mReviewsRecyclerView.setLayoutManager(new LinearLayoutManager(mReviewsRecyclerView.getContext()));
@@ -171,10 +149,8 @@ public class DetailActivityFragment extends Fragment {
         mReviewsRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));*/
 
         if(mMovie !=null){
-            FetchTrailersTask fetchTrailers = new FetchTrailersTask(mNoTrailerTextView,mTrailerAdapter,mMovie);
+            FetchTrailersTask fetchTrailers = new FetchTrailersTask(getActivity(),mNoTrailerTextView,mTrailersRecyclerView,mMovie);
             fetchTrailers.execute();
-            setListViewHeightBasedOnChildren();
-
 
             FetchReviewsTask fetchReviewsTask = new FetchReviewsTask(getActivity(),mMovie, mReviewsRecyclerView,mNoReviewsTextView);
             fetchReviewsTask.execute();
@@ -188,7 +164,7 @@ public class DetailActivityFragment extends Fragment {
         final SharedPreferences.Editor editor = pref.edit();
 
         Set<String> set = pref.getStringSet(FAVOURITE_MOVIES_KEY, null);
-        if( set!= null && set.contains(mMovie.getId())) {
+        if( set!= null && mMovie!= null && set.contains(mMovie.getId())) {
             favouriteFloatingActionButton.setImageResource(R.drawable.ic_favorite_pink);
         }
 
@@ -204,6 +180,43 @@ public class DetailActivityFragment extends Fragment {
                         editor.putStringSet(FAVOURITE_MOVIES_KEY, set);
                         editor.commit();
                         Log.d(LOG_TAG, "Movie : " + mMovie.title + " has been REMOVED from shared preferences.");
+
+                        if(MainActivity.mTwoPane && MainFragment.isFavoritePref){
+                            Log.d(LOG_TAG, "Movie : " + mMovie.title + " has been REMOVED from two pane");
+                            MainFragment.movieAdapter.remove(mMovie);
+
+                            if(MainFragment.movieAdapter.isEmpty()){
+                                getFragmentManager().beginTransaction().
+                                        detach(DetailActivityFragment.this).commit();
+                            }else{
+                                mMovie = MainFragment.movieAdapter.getItem(0);
+                                Log.d(LOG_TAG, "Movie : " + mMovie.title + " added to second pane!");
+//                                DetailActivityFragment.this.onCreateView(inflater,container, savedInstanceState);
+                                Bundle args = new Bundle();
+                                args.putParcelable(DetailActivityFragment.DETAIL_MOVIE_OBJ, mMovie);
+
+                                DetailActivityFragment detailFragment = new DetailActivityFragment();
+                                detailFragment.setArguments(args);
+
+                                getActivity().getSupportFragmentManager().beginTransaction()
+                                        .replace(R.id.movie_detail_container, detailFragment, MainActivity.DETAILFRAGMENT_TAG)
+                                        .commit();
+
+                            }
+
+
+                            /*Bundle args = new Bundle();
+                            args.putParcelable(DetailActivityFragment.DETAIL_MOVIE_OBJ, MainFragment.movieAdapter.getItem(0));
+
+                            DetailActivityFragment detailFragment = new DetailActivityFragment();
+                            detailFragment.setArguments(args);
+
+                            AppCompatActivity appCompatActivity = (AppCompatActivity) getActivity();
+                            MainActivity.getSupportFragmentManager().beginTransaction()
+                                    .replace(R.id.movie_detail_container, detailFragment, MainActivity.DETAILFRAGMENT_TAG)
+                                    .commit();*/
+                        }
+
                     } else {
                         favouriteFloatingActionButton.setImageResource(R.drawable.ic_favorite_pink);
                         if (set == null) {
@@ -226,7 +239,23 @@ public class DetailActivityFragment extends Fragment {
         return rootView;
     }
 
-    public void setListViewHeightBasedOnChildren() {
+/*    public static void setUpMovieDetails(Movie mMovie){
+        Log.d(LOG_TAG, "Received intent movie :  "+mMovie.title);
+        final CollapsingToolbarLayout collapsingToolbar =
+                (CollapsingToolbarLayout) rootView.findViewById(R.id.collapsing_toolbar);
+        collapsingToolbar.setTitle(mMovie.title);
+        collapsingToolbar.setEnabled(false);
+
+        String poster = "http://image.tmdb.org/t/p/w185/"+mMovie.posterPath;
+
+        ImageView collapsingToolbarImageView = (ImageView) rootView.findViewById(R.id.collapsingToolbarImage);
+        Picasso.with(getActivity()).load(poster).into(collapsingToolbarImageView);
+        ((TextView) rootView.findViewById(R.id.movieOverview)).setText(mMovie.overview);
+        ((TextView) rootView.findViewById(R.id.userRatings)).setText(mMovie.voteAverage);
+        ((TextView) rootView.findViewById(R.id.releaseDate)).setText(mMovie.releaseDate);
+    }*/
+
+/*    public void setListViewHeightBasedOnChildren() {
         ListAdapter listAdapter = mTrailersListView.getAdapter();
         if (listAdapter == null)
             return;
@@ -245,7 +274,7 @@ public class DetailActivityFragment extends Fragment {
         ViewGroup.LayoutParams params = mTrailersListView.getLayoutParams();
         params.height = totalHeight + (mTrailersListView.getDividerHeight() * (listAdapter.getCount() - 1));
         mTrailersListView.setLayoutParams(params);
-    }
+    }*/
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

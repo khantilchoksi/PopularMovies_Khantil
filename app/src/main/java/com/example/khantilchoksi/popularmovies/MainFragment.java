@@ -34,8 +34,9 @@ public class MainFragment extends Fragment {
 
 
     // TODO: Rename and change types of parameters
-    private MovieAdapter movieAdapter;
+    public static MovieAdapter movieAdapter;
     private TextView favoriteEmptyTextView;
+    public static boolean isFavoritePref = false;
 
 
     public MainFragment() {
@@ -91,25 +92,33 @@ public class MainFragment extends Fragment {
         String sortBy = pref.getString("sort_movies","popular");
 
         if(sortBy.equals("favorite")){
+            isFavoritePref = true;
             movieAdapter.clear();
             Log.d("Pref","Favorite is selected");
             SharedPreferences sharedPreferences = getActivity().getSharedPreferences(DetailActivity.SHARED_PREF_FILE, Context.MODE_PRIVATE);
             Set<String> favoriteMoviesSet = sharedPreferences.getStringSet(DetailActivity.FAVOURITE_MOVIES_KEY, null);
 
+            ArrayList<String> favoriteMovieList = null;
             if(favoriteMoviesSet != null){
 //                String[] favoriteMoviesList = (String[]) favoriteMoviesSet.toArray();
-                ArrayList<String> favoriteMovieList = new ArrayList<String>(favoriteMoviesSet);
+                favoriteMovieList = new ArrayList<String>(favoriteMoviesSet);
 
                 for(String movieId : favoriteMovieList){
                     Log.d(" Favourite Movie: ", movieId);
                     FetchFavoriteMovieTask fetchFavoriteMovieTask = new FetchFavoriteMovieTask(getActivity(), movieAdapter, movieId);
                     fetchFavoriteMovieTask.execute();
                 }
-            }else{
+            }
+
+            if(favoriteMovieList!= null && favoriteMovieList.isEmpty()){
+                Log.d("Tag","favorite movie list is empty");
                 favoriteEmptyTextView.setVisibility(View.VISIBLE);
+            }else{
+                favoriteEmptyTextView.setVisibility(View.GONE);
             }
 
         }else{
+            isFavoritePref = false;
             FetchMoviesTask fetchMovies = new FetchMoviesTask(getActivity(),movieAdapter);
             fetchMovies.execute();
         }

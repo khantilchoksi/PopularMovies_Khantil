@@ -3,7 +3,9 @@ package com.example.khantilchoksi.popularmovies;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -140,6 +142,22 @@ public class FetchMoviesTask extends AsyncTask<Void, Void, Movie[]> {
             for(Movie m : movies){
                 mMovieAdapter.add(m);
             }
+
+            if(MainActivity.mTwoPane){
+                //Tablet UX
+                Log.d(LOG_TAG,"Two pane layout initialized with first movie details");
+                Bundle args = new Bundle();
+                args.putParcelable(DetailActivityFragment.DETAIL_MOVIE_OBJ, mMovieAdapter.getItem(0));
+
+                DetailActivityFragment detailFragment = new DetailActivityFragment();
+                detailFragment.setArguments(args);
+
+                AppCompatActivity appCompatActivity = (AppCompatActivity) mContext;
+                appCompatActivity.getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.movie_detail_container, detailFragment, MainActivity.DETAILFRAGMENT_TAG)
+                        .commit();
+            }
+
         }
     }
 }

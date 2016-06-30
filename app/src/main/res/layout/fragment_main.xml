@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/moviesGrid"
         android:horizontalSpacing="0dp"
-        android:numColumns="2"
+        android:numColumns="auto_fit"
         android:columnWidth="150dp"
         android:verticalSpacing="8dp"
         android:background="@android:color/white"

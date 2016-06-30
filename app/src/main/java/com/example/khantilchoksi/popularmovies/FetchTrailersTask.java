@@ -1,6 +1,8 @@
 package com.example.khantilchoksi.popularmovies;
 
+import android.content.Context;
 import android.os.AsyncTask;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -15,25 +17,28 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * Created by Khantil on 28-06-2016.
  */
 //AsyncTask for fetching movie trailer
-public class FetchTrailersTask extends AsyncTask<Void, Void, Trailer[]> {
+public class FetchTrailersTask extends AsyncTask<Void, Void, ArrayList<Trailer>> {
     private final String LOG_TAG = FetchTrailersTask.class.getSimpleName();
     private TextView mNoTrailerTextView;
-    private TrailerAdapter mTrailerAdapter;
+    private RecyclerView mTrailersRecyclerView;
     private Movie mMovie;
+    private Context mContext;
 
-    public FetchTrailersTask(TextView mNoTrailerTextView, TrailerAdapter mTrailerAdapter, Movie mMovie) {
+    public FetchTrailersTask(Context context,TextView mNoTrailerTextView, RecyclerView mTrailersRecyclerView, Movie mMovie) {
+        this.mContext = context;
         this.mNoTrailerTextView = mNoTrailerTextView;
-        this.mTrailerAdapter = mTrailerAdapter;
+        this.mTrailersRecyclerView = mTrailersRecyclerView;
         this.mMovie = mMovie;
     }
 
     @Override
-    protected Trailer[] doInBackground(Void... params) {
+    protected ArrayList<Trailer> doInBackground(Void... params) {
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
 
@@ -98,12 +103,12 @@ public class FetchTrailersTask extends AsyncTask<Void, Void, Trailer[]> {
         return null;
     }
 
-    private Trailer[] getTrailersDataFromJson(String trailersJsonStr) throws JSONException{
+    private ArrayList<Trailer> getTrailersDataFromJson(String trailersJsonStr) throws JSONException{
         Log.d(LOG_TAG,"Trailer getTrailerDataFromJson called");
         JSONObject moviesJson = new JSONObject(trailersJsonStr);
         JSONArray trailersArray = moviesJson.getJSONArray("results");
 
-        Trailer[] trailers = new Trailer[trailersArray.length()];
+        ArrayList<Trailer> trailersArrayList = new ArrayList<>();
         Log.d(LOG_TAG,"Trailer Size:  " + trailersArray.length());
         for(int i=0; i < trailersArray.length(); i++){
 
@@ -116,34 +121,30 @@ public class FetchTrailersTask extends AsyncTask<Void, Void, Trailer[]> {
             name = trialerDetailsJSONObject.getString("name");
             key = trialerDetailsJSONObject.getString("key");
 
-            trailers[i] = new Trailer(id,name,key);
+            trailersArrayList.add(new Trailer(id,name,key));
 
         }
 
-        for(Trailer t : trailers){
+        for(Trailer t : trailersArrayList){
             Log.d(LOG_TAG, "Trailer  " + t.toString());
         }
 
-        return trailers;
+        return trailersArrayList;
     }
 
     @Override
-    protected void onPostExecute(Trailer[] trailers) {
-        if(trailers != null){
-            mTrailerAdapter.clear();
-            Log.d(LOG_TAG, "Trailer adapter after clearing:  " + mTrailerAdapter.getCount());
+    protected void onPostExecute(ArrayList<Trailer> trailers) {
+        if(trailers != null) {
 
 /*                for(Trailer t : trailers){
                     Log.d(LOG_TAG, "Trailer added to adapter:  " + t.getTrailerName());
                     mTrailerAdapter.add(t);
                 }*/
-            if(trailers.length == 0){
+            if(trailers.size() == 0){
                 mNoTrailerTextView.setVisibility(View.VISIBLE);
             }else{
-                for(int i=0;i<trailers.length;i++){
-                    Log.d(LOG_TAG, "Trailer added to adapter:  " + trailers[i].getTrailerName());
-                    mTrailerAdapter.add(trailers[i]);
-                }
+
+                mTrailersRecyclerView.setAdapter(new TrailersRecyclerViewAdapter(mContext, trailers));
 
             }
 

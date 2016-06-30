@@ -1,18 +1,14 @@
 package com.example.khantilchoksi.popularmovies;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Khantil on 26-06-2016.
@@ -23,7 +19,6 @@ public class ReviewsRecyclerViewAdapter
     private ArrayList<ArrayList<String>> mReviews;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public String mBoundString;
 
         public final TextView mAuthorTextView;
         public final TextView mContentTextView;
